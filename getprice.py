@@ -64,7 +64,7 @@ def round_trip(DepartCity, ReturnCity, departDate, returnDate, debug=0):
     print('%s-%s往返 %s去 %s回 最低价%s 搜索耗时%s秒' %(DepartCity, ReturnCity, departDate, returnDate, lowest, timedelsta))
     se.hide()
     del se
-    price = lowest[1:-1]
+    price = lowest[1:]
     insert_price(DepartCity, ReturnCity, departDate, returnDate, price)
     #return price
 
