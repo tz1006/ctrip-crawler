@@ -65,7 +65,8 @@ def round_trip(DepartCity, ReturnCity, departDate, returnDate, debug=0):
     se.hide()
     del se
     price = lowest[1:-1]
-    return price
+    insert_price(DepartCity, ReturnCity, departDate, returnDate, price)
+    #return price
 
 
 def help():
