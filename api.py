@@ -41,7 +41,30 @@ def test_ip(type, ip, port):
             ip_list.append((type, ip, port))
 
 ##########################################
+# spys.one
+def get_spys():
+    url = 'http://spys.one/en/http-proxy-list'
+    se.open(url)
+    se.evaluate("document.getElementById('xpp').value=5")
+    se.evaluate("document.getElementById('xf1').value=1")
+    se.evaluate("document.getElementById('xf5').value=1")
+    se.call('#xpp', 'onchange', expect_loading=True)
+    html = se.content
+    soup = BeautifulSoup(html, "html.parser")
+    source = soup.select('tr.spy1xx')
+    source1 = soup.select('tr.spy1x')
+    source1.remove(source1[0])
+    source = source + source1
+    #print(len(source))
+    for i in source:
+        ip_info = spys_info(i)
+        add_task(ip_info[0], ip_info[1], ip_info[2])
 
+def spys_info(source):
+    ip = source.select('font.spy14')[0].text.split('d',1)[0]
+    port = source.select('font.spy14')[0].text.split(':')[-1]
+    type = 'http'
+    return(type, ip, port)
 
 ##########################################
 UA = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
@@ -108,6 +131,7 @@ def get_proxy_m():
     threads = []
     ip_list = []
     #get_hidemy()
+    get_spys()
     get_sslproxies()
     for t in threads:
         t.join()
