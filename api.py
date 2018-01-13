@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*- 
-# filename: ctrip/usproxy.py
+# filename: ctrip/api.py
 
 import requests
 from bs4 import BeautifulSoup
