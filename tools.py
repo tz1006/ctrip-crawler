@@ -4,14 +4,18 @@
 
 import requests
 import yaml
+import sqlite3
 from datetime import datetime, timedelta
+import os
 
 s = requests.session()
 s.keep_alive = False
 
-def code(city):
+def code(city, debug=0):
     url = 'http://flights.ctrip.com/international/tools/poi.ashx?charset=utf-8&key=%s&channel=1&mode=1&f=1&v=2' % city
     r = s.get(url)
+    if debug == 1:
+        return r
     data = r.text.split('=')[1]
     res = yaml.load(data)
     code = res['Data'][0]['Code']
@@ -36,6 +40,34 @@ def date_list(start_date, end_date):
     return li
 
 
+def insert_price(departCity, arrivalCity, departDate, returnDate, price):
+    if os.path.exists('database') == False:
+        os.makedirs('database')
+    table_name = '\'%s-%s\'' % (code(departCity), code(arrivalCity))
+    departDate = '\'%d月%d日\'' % (int(departDate.split('-')[1]), int(departDate.split('-')[2]))
+    returnDate = '\'%d月%d日\'' % (int(returnDate.split('-')[1]), int(returnDate.split('-')[2]))
+    conn = sqlite3.connect('database/ctrip.db')
+    cursor = conn.cursor()
+    # 尝试新建表
+    cursor.execute("CREATE TABLE IF NOT EXISTS %s (departDate TEXT UNIQUE);" % table_name)
+    # 尝试添加列
+    try:
+        cursor.execute("ALTER TABLE %s ADD COLUMN %s INT" % (table_name, returnDate))
+    except:
+        pass
+    # 尝试添加行
+    try:
+        cursor.execute("INSERT INTO %s ('departDate') VALUES (%s)" % (table_name, departDate))
+    except:
+        pass
+    # 添加数据
+    try:
+        cursor.execute("UPDATE %s set %s=%s WHERE departDate=%s" % (table_name, returnDate, price, departDate))
+        print('已添加数据%s,%s ¥%s到表%s' %(departDate, returnDate, price, table_name))
+    except:
+        pass
+    conn.commit()
+    conn.close()
 
 def help():
     print('''
@@ -45,5 +77,6 @@ def help():
     ''')
 
 help()
+
 
 
