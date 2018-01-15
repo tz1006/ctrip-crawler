@@ -36,14 +36,14 @@ def round_trip(DepartCity, ReturnCity, departDate, returnDate, debug=0):
             se.open(url, user_agent=choice(ua_list))
             #print('已打开 %s' % url)
         except:
-            se.hide()
+            se.exit()
             del se
             proxypool.remove(proxy)
             print("blacklist %s" % proxy[1])
             continue
         ctrip_access = se.exists('li:nth-child(5) > span')
         if ctrip_access == False:
-            se.hide()
+            se.exit()
             del se
             proxypool.remove(proxy)
             print("blacklist %s" % proxy[1])
@@ -62,7 +62,7 @@ def round_trip(DepartCity, ReturnCity, departDate, returnDate, debug=0):
     end_time = datetime.now()
     timedelsta = (end_time - start_time).seconds
     print('%s-%s往返 %s去 %s回 最低价%s 搜索耗时%s秒' %(DepartCity, ReturnCity, departDate, returnDate, lowest, timedelsta))
-    se.hide()
+    se.exit()
     del se
     price = lowest[1:]
     insert_price(DepartCity, ReturnCity, departDate, returnDate, price)
