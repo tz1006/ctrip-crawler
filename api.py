@@ -168,6 +168,6 @@ def hello_world():
     result = proxypool
     return jsonify(result)
 
-app.run()
+app.run(host='0.0.0.0',port=6666)
 
 
